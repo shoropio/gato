@@ -1,0 +1,6 @@
+{
+  "name": "Gato",
+  "description": "Un juego de Gato (Tic-Tac-Toe) futurista y minimalista con IA (Minimax), multijugador local, logros, estadísticas completas y efectos visuales modernos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
