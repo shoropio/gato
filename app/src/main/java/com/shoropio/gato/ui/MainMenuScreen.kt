@@ -255,17 +255,11 @@ fun MainMenuScreen(
             Spacer(modifier = Modifier.height(36.dp))
 
             // Futuristic version tag
-            //NeonText(
-                //text = "GATO OS V1.0.4 - SHOROPIO",
-                //color = Color.Gray,
-                //fontSize = 10.sp,
-                //modifier = Modifier.padding(bottom = 4.dp)
-            //)
             NeonText(
                 text = "© 2026 Shoropio Corporation. Todos los derechos reservados.",
                 color = Color.Gray.copy(alpha = 0.8f),
                 fontSize = 8.sp,
-                modifier = Modifier.padding(bottom = 24.dp)
+                modifier = Modifier.padding(bottom = 4.dp)
             )
         }
 
