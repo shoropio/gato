@@ -61,6 +61,7 @@ android {
   packaging {
     jniLibs {
       keepDebugSymbols += "**/libandroidx.graphics.path.so"
+      keepDebugSymbols += "**/libdatastore_shared_counter.so"
     }
   }
   testOptions {
