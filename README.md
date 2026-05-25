@@ -1,47 +1,47 @@
 # Gato
 
-Gato is an Android tic-tac-toe game with a cyberpunk neon interface, local multiplayer, AI modes, match history, achievements, sound feedback, and customizable visual styles.
+Gato es un juego Android de tres en raya con interfaz neon cyberpunk, multijugador local, modos contra IA, historial de partidas, logros, respuesta sonora y estilos visuales personalizables.
 
-## Features
+## Características
 
-- Player vs AI with multiple difficulty levels.
-- Local player vs player mode.
-- AI vs AI spectator mode.
-- Persistent stats, streaks, and achievements with Room.
-- Neon Compose UI with zero-radius panels and controls.
-- Credits screen with open source acknowledgements.
+- Modo jugador contra IA con varios niveles de dificultad.
+- Modo jugador contra jugador local.
+- Modo espectador IA contra IA.
+- Estadísticas, rachas y logros persistentes con Room.
+- Interfaz Jetpack Compose con paneles y controles de radio cero.
+- Pantalla de créditos con reconocimientos de código abierto.
 
-## Requirements
+## Requisitos
 
-- Android Studio with JDK 21 support.
+- Android Studio con soporte para JDK 21.
 - Android SDK 36.
-- A device or emulator running Android 7.0/API 24 or newer.
+- Un dispositivo o emulador con Android 7.0/API 24 o superior.
 
-The project includes Gradle wrapper files and Gradle Daemon JVM criteria, so supported machines can use or download a compatible JDK automatically.
+El proyecto incluye Gradle Wrapper y criterios de JVM para el Gradle Daemon, por lo que las máquinas compatibles pueden usar o descargar automáticamente un JDK adecuado.
 
-## Build
+## Compilación
 
 ```powershell
 .\gradlew.bat testDebugUnitTest :app:packageDebug --warning-mode all
 ```
 
-The debug APK is generated at:
+El APK debug se genera en:
 
 ```text
 app/build/outputs/apk/debug/app-debug.apk
 ```
 
-## Project
+## Proyecto
 
-- Package: `com.shoropio.gato`
-- Minimum SDK: 24
-- Target SDK: 36
-- UI: Jetpack Compose and Material 3
-- Persistence: Room
-- Tests: JUnit, Robolectric, Roborazzi
+- Paquete: `com.shoropio.gato`
+- SDK mínimo: 24
+- SDK objetivo: 36
+- Interfaz: Jetpack Compose y Material 3
+- Persistencia: Room
+- Pruebas: JUnit, Robolectric y Roborazzi
 
-## Credits
+## Créditos
 
-This application uses open source Android and Kotlin libraries including AndroidX, Jetpack Compose, Room, Kotlin Coroutines, KSP, Moshi, OkHttp, Retrofit, Robolectric, and Roborazzi.
+Esta aplicación usa bibliotecas Android y Kotlin de código abierto, incluyendo AndroidX, Jetpack Compose, Room, Kotlin Coroutines, KSP, Moshi, OkHttp, Retrofit, Robolectric y Roborazzi.
 
 © 2026 Shoropio Corporation. Todos los derechos reservados.
