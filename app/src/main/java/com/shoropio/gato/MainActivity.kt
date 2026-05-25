@@ -1,4 +1,4 @@
-package com.example
+package com.shoropio.gato
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,14 +15,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.ui.CreditsScreen
-import com.example.ui.GameScreen
-import com.example.ui.MainMenuScreen
-import com.example.ui.SettingsScreen
-import com.example.ui.SplashScreen
-import com.example.ui.StatsScreen
-import com.example.ui.theme.GatoTheme
-import com.example.viewmodel.GameViewModel
+import com.shoropio.gato.ui.CreditsScreen
+import com.shoropio.gato.ui.GameScreen
+import com.shoropio.gato.ui.MainMenuScreen
+import com.shoropio.gato.ui.SettingsScreen
+import com.shoropio.gato.ui.SplashScreen
+import com.shoropio.gato.ui.StatsScreen
+import com.shoropio.gato.ui.theme.GatoTheme
+import com.shoropio.gato.viewmodel.GameViewModel
 
 /**
  * Main activity for Gato (Tic-Tac-Toe) Matrix Edition.

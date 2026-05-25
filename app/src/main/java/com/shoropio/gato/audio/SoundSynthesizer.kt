@@ -1,4 +1,4 @@
-package com.example.audio
+package com.shoropio.gato.audio
 
 import android.media.AudioAttributes
 import android.media.AudioFormat

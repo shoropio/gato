@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "332656003926",
+    "project_id": "gato-8fa14",
+    "storage_bucket": "gato-8fa14.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332656003926:android:41d37517e404ae7372e4f7",
+        "android_client_info": {
+          "package_name": "com.shoropio.gato"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "332656003926-lbu2v23sgmb2bmv9jhqju6kenrbrndl1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-TxCTQhpw7dHkWdnWRJ99a7V5zhsHSCs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "332656003926-lbu2v23sgmb2bmv9jhqju6kenrbrndl1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

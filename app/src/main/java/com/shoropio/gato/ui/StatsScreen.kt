@@ -1,4 +1,4 @@
-package com.example.ui
+package com.shoropio.gato.ui
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -16,8 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
@@ -34,14 +33,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.data.AchievementEntity
-import com.example.data.GameStatsEntity
-import com.example.ui.theme.NeonAmber
-import com.example.ui.theme.NeonCyan
-import com.example.ui.theme.NeonEmerald
-import com.example.ui.theme.NeonMagenta
-import com.example.ui.theme.NeonPurple
-import com.example.viewmodel.GameViewModel
+import com.shoropio.gato.data.AchievementEntity
+import com.shoropio.gato.data.GameStatsEntity
+import com.shoropio.gato.ui.theme.NeonAmber
+import com.shoropio.gato.ui.theme.NeonCyan
+import com.shoropio.gato.ui.theme.NeonEmerald
+import com.shoropio.gato.ui.theme.NeonMagenta
+import com.shoropio.gato.ui.theme.NeonPurple
+import com.shoropio.gato.viewmodel.GameViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -98,16 +97,16 @@ fun StatsScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RectangleShape)
                     .background(Color(0x1F121824))
-                    .border(width = 1.dp, color = Color(0x3300F0FF), shape = RoundedCornerShape(12.dp))
+                    .border(width = 1.dp, color = Color(0x3300F0FF), shape = RectangleShape)
                     .padding(4.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(RectangleShape)
                         .background(if (selectedStatsTab == "all") NeonCyan.copy(alpha = 0.15f) else Color.Transparent)
                         .clickable { selectedStatsTab = "all" }
                         .padding(vertical = 10.dp),
@@ -123,7 +122,7 @@ fun StatsScreen(
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(RectangleShape)
                         .background(if (selectedStatsTab == "achievements") NeonCyan.copy(alpha = 0.15f) else Color.Transparent)
                         .clickable { selectedStatsTab = "achievements" }
                         .padding(vertical = 10.dp),
@@ -231,12 +230,12 @@ fun StatsScreen(
                             Box(
                                 modifier = Modifier
                                     .size(48.dp)
-                                    .clip(CircleShape)
+                                    .clip(RectangleShape)
                                     .background(if (ach.isUnlocked) NeonEmerald.copy(alpha = 0.15f) else Color(0x0DFFFFFF))
                                     .border(
                                         width = 1.5.dp,
                                         color = if (ach.isUnlocked) NeonEmerald else Color.DarkGray,
-                                        shape = CircleShape
+                                        shape = RectangleShape
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -290,7 +289,7 @@ fun StatsScreen(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .height(4.dp)
-                                                .clip(RoundedCornerShape(2.dp)),
+                                                .clip(RectangleShape),
                                             color = NeonPurple,
                                             trackColor = Color(0x33FFFFFF)
                                         )

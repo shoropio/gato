@@ -1,4 +1,4 @@
-package com.example.ui
+package com.shoropio.gato.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -16,8 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -33,12 +32,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.theme.NeonAmber
-import com.example.ui.theme.NeonCyan
-import com.example.ui.theme.NeonEmerald
-import com.example.ui.theme.NeonMagenta
-import com.example.ui.theme.NeonPurple
-import com.example.viewmodel.GameViewModel
+import com.shoropio.gato.ui.theme.NeonAmber
+import com.shoropio.gato.ui.theme.NeonCyan
+import com.shoropio.gato.ui.theme.NeonEmerald
+import com.shoropio.gato.ui.theme.NeonMagenta
+import com.shoropio.gato.ui.theme.NeonPurple
+import com.shoropio.gato.viewmodel.GameViewModel
 
 @Composable
 fun SettingsScreen(
@@ -191,12 +190,12 @@ fun SettingsScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
+                                .clip(RectangleShape)
                                 .background(if (isSelected) Color(0x1A00F0FF) else Color.Transparent)
                                 .border(
                                     width = 1.dp,
                                     color = if (isSelected) NeonCyan.copy(alpha = 0.4f) else Color.Transparent,
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = RectangleShape
                                 )
                                 .clickable(enabled = !isLocked) { viewModel.setBoardStyle(styleKey) }
                                 .padding(12.dp),
@@ -223,13 +222,13 @@ fun SettingsScreen(
                                         Box(
                                             modifier = Modifier
                                                 .size(14.dp)
-                                                .clip(RoundedCornerShape(3.dp))
+                                                .clip(RectangleShape)
                                                 .background(colors.first)
                                         )
                                         Box(
                                             modifier = Modifier
                                                 .size(14.dp)
-                                                .clip(RoundedCornerShape(3.dp))
+                                                .clip(RectangleShape)
                                                 .background(colors.second)
                                         )
                                     }
@@ -273,19 +272,19 @@ fun SettingsScreen(
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
-                                .clip(RoundedCornerShape(10.dp))
+                                .clip(RectangleShape)
                                 .clickable { viewModel.setAvatar(avatarKey) }
                                 .padding(6.dp)
                         ) {
                             Box(
                                 modifier = Modifier
                                     .size(54.dp)
-                                    .clip(CircleShape)
+                                    .clip(RectangleShape)
                                     .background(if (isSelected) NeonCyan.copy(alpha = 0.15f) else Color(0x1AFFFFFF))
                                     .border(
                                         width = 1.5.dp,
                                         color = if (isSelected) NeonCyan else Color.Transparent,
-                                        shape = CircleShape
+                                        shape = RectangleShape
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {

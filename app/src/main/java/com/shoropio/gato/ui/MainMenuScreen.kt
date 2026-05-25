@@ -1,10 +1,9 @@
-package com.example.ui
+package com.shoropio.gato.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,16 +18,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -45,19 +38,16 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.data.GameStatsEntity
-import com.example.ui.theme.CyberObsidian
-import com.example.ui.theme.NeonAmber
-import com.example.ui.theme.NeonCyan
-import com.example.ui.theme.NeonEmerald
-import com.example.ui.theme.NeonMagenta
-import com.example.ui.theme.NeonPurple
-import com.example.viewmodel.GameViewModel
+import com.shoropio.gato.data.GameStatsEntity
+import com.shoropio.gato.ui.theme.CyberObsidian
+import com.shoropio.gato.ui.theme.NeonAmber
+import com.shoropio.gato.ui.theme.NeonCyan
+import com.shoropio.gato.ui.theme.NeonEmerald
+import com.shoropio.gato.ui.theme.NeonMagenta
+import com.shoropio.gato.ui.theme.NeonPurple
+import com.shoropio.gato.viewmodel.GameViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -128,12 +118,11 @@ fun MainMenuScreen(
                     Box(
                         modifier = Modifier
                             .size(60.dp)
-                            .clip(CircleShape)
+                            .clip(RectangleShape)
                             .background(Color(0x1F00F0FF))
                             .drawBehind {
-                                drawCircle(
+                                drawRect(
                                     color = NeonCyan,
-                                    radius = size.width / 2f,
                                     style = Stroke(width = 2.dp.toPx())
                                 )
                                 // Draw horizontal digital mesh vectors
@@ -255,7 +244,7 @@ fun MainMenuScreen(
                 }
 
                 CyberButton(
-                    text = "CRÉDITOS Y CÓDIGO",
+                    text = "CRÉDITOS",
                     onClick = onNavigateToCredits,
                     color = NeonEmerald,
                     modifier = Modifier.fillMaxWidth(0.95f),
@@ -266,10 +255,16 @@ fun MainMenuScreen(
             Spacer(modifier = Modifier.height(36.dp))
 
             // Futuristic version tag
+            //NeonText(
+                //text = "GATO OS V1.0.4 - SHOROPIO",
+                //color = Color.Gray,
+                //fontSize = 10.sp,
+                //modifier = Modifier.padding(bottom = 4.dp)
+            //)
             NeonText(
-                text = "GATO OS V1.0.4 • SHOROPIO",
-                color = Color.Gray,
-                fontSize = 10.sp,
+                text = "© 2026 Shoropio Corporation. Todos los derechos reservados.",
+                color = Color.Gray.copy(alpha = 0.8f),
+                fontSize = 8.sp,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
         }
@@ -283,7 +278,7 @@ fun MainMenuScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(CyberObsidian.copy(alpha = 0.82f))
+                    .background(CyberObsidian.copy(alpha = 0.94f))
                     .clickable { showDifficultyDialog = false },
                 contentAlignment = Alignment.Center
             ) {
@@ -292,7 +287,9 @@ fun MainMenuScreen(
                         .fillMaxWidth(0.85f)
                         .clickable(enabled = false) {}, // Block tap clicks passing through
                     borderColor = NeonCyan,
-                    glowColor = Color(0x1F00F0FF)
+                    glowColor = Color(0x1F00F0FF),
+                    backgroundColor = CyberObsidian.copy(alpha = 0.96f),
+                    contentPadding = 18.dp
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -329,7 +326,8 @@ fun MainMenuScreen(
                                     onNavigateToGame()
                                 },
                                 color = diffColor,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
+                                fontSize = 14.sp
                             )
                         }
 
@@ -339,7 +337,8 @@ fun MainMenuScreen(
                             color = Color.LightGray,
                             modifier = Modifier
                                 .fillMaxWidth(0.6f)
-                                .padding(top = 8.dp)
+                                .padding(top = 8.dp),
+                            fontSize = 13.sp
                         )
                     }
                 }

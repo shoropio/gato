@@ -1,4 +1,4 @@
-package com.example.data
+package com.shoropio.gato.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

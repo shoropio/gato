@@ -1,4 +1,4 @@
-package com.example.ui
+package com.shoropio.gato.ui
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -25,9 +25,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.audio.SoundSynthesizer
-import com.example.ui.theme.NeonCyan
-import com.example.ui.theme.NeonMagenta
+import com.shoropio.gato.audio.SoundSynthesizer
+import com.shoropio.gato.ui.theme.NeonCyan
+import com.shoropio.gato.ui.theme.NeonMagenta
 import kotlinx.coroutines.delay
 
 @Composable

@@ -1,4 +1,4 @@
-package com.example.data
+package com.shoropio.gato.data
 
 import android.content.Context
 import androidx.room.Dao

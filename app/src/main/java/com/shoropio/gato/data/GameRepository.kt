@@ -1,4 +1,4 @@
-package com.example.data
+package com.shoropio.gato.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

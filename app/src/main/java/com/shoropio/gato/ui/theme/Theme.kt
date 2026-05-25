@@ -1,8 +1,10 @@
-package com.example.ui.theme
+package com.shoropio.gato.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -10,6 +12,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 
 private val DarkColorScheme = darkColorScheme(
     primary = NeonCyan,
@@ -41,6 +44,14 @@ private val LightColorScheme = lightColorScheme(
     outline = Color(0xFFCBD5E1)
 )
 
+private val ZeroRadiusShapes = Shapes(
+    extraSmall = RoundedCornerShape(0.dp),
+    small = RoundedCornerShape(0.dp),
+    medium = RoundedCornerShape(0.dp),
+    large = RoundedCornerShape(0.dp),
+    extraLarge = RoundedCornerShape(0.dp)
+)
+
 @Composable
 fun GatoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -60,6 +71,7 @@ fun GatoTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
+        shapes = ZeroRadiusShapes,
         typography = Typography,
         content = content
     )

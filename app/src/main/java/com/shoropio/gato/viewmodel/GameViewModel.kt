@@ -1,4 +1,4 @@
-package com.example.viewmodel
+package com.shoropio.gato.viewmodel
 
 import android.content.Context
 import android.os.Handler
@@ -6,13 +6,13 @@ import android.os.Looper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.audio.SoundSynthesizer
-import com.example.data.AchievementEntity
-import com.example.data.GameDatabase
-import com.example.data.GameRepository
-import com.example.data.GameResult
-import com.example.data.GameStatsEntity
-import com.example.data.UserSettingsEntity
+import com.shoropio.gato.audio.SoundSynthesizer
+import com.shoropio.gato.data.AchievementEntity
+import com.shoropio.gato.data.GameDatabase
+import com.shoropio.gato.data.GameRepository
+import com.shoropio.gato.data.GameResult
+import com.shoropio.gato.data.GameStatsEntity
+import com.shoropio.gato.data.UserSettingsEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

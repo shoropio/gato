@@ -1,4 +1,4 @@
-package com.example.ui
+package com.shoropio.gato.ui
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -15,14 +15,11 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,14 +41,15 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.audio.SoundSynthesizer
-import com.example.ui.theme.CyberObsidian
-import com.example.ui.theme.NeonCyan
-import com.example.ui.theme.NeonMagenta
+import com.shoropio.gato.audio.SoundSynthesizer
+import com.shoropio.gato.ui.theme.CyberObsidian
+import com.shoropio.gato.ui.theme.NeonCyan
+import com.shoropio.gato.ui.theme.NeonMagenta
 
 /**
  * Renders an immersive, procedurally drawn dark cosmic space grid background
@@ -139,13 +137,15 @@ fun GlassCard(
     modifier: Modifier = Modifier,
     borderColor: Color = Color(0x3300F0FF),
     glowColor: Color = Color(0x0D00F0FF),
-    cornerRadius: Dp = 16.dp,
+    cornerRadius: Dp = 0.dp,
+    backgroundColor: Color = Color(0x0F0F172C),
+    contentPadding: Dp = 16.dp,
     content: @Composable BoxScope.() -> Unit
 ) {
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(cornerRadius))
-            .background(Color(0x0F0F172C))
+            .clip(RectangleShape)
+            .background(backgroundColor)
             .border(
                 width = 1.5.dp,
                 brush = Brush.verticalGradient(
@@ -154,19 +154,17 @@ fun GlassCard(
                         borderColor.copy(alpha = 0.1f)
                     )
                 ),
-                shape = RoundedCornerShape(cornerRadius)
+                shape = RectangleShape
             )
             .drawBehind {
                 // Outer glow shadow
-                drawRoundRect(
+                drawRect(
                     color = glowColor,
-                    size = size,
                     alpha = 0.5f,
-                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(cornerRadius.toPx(), cornerRadius.toPx()),
                     style = Stroke(width = 4.dp.toPx())
                 )
             }
-            .padding(16.dp),
+            .padding(contentPadding),
         content = content
     )
 }
@@ -181,7 +179,8 @@ fun CyberButton(
     modifier: Modifier = Modifier,
     color: Color = NeonCyan,
     isSecondary: Boolean = false,
-    testTag: String = ""
+    testTag: String = "",
+    fontSize: TextUnit = 15.sp
 ) {
     val haptic = LocalHapticFeedback.current
     val scaleAnim = remember { Animatable(1f) }
@@ -208,7 +207,7 @@ fun CyberButton(
                 scaleX = scaleAnim.value
                 scaleY = scaleAnim.value
             }
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RectangleShape)
             .background(buttonBg)
             .border(
                 width = 2.dp,
@@ -218,7 +217,7 @@ fun CyberButton(
                         finalBorderColor.copy(alpha = 0.3f)
                     )
                 ),
-                shape = RoundedCornerShape(12.dp)
+                shape = RectangleShape
             )
             .clickable(
                 interactionSource = interactionSource,
@@ -229,13 +228,14 @@ fun CyberButton(
                     onClick()
                 }
             )
-            .height(54.dp),
+            .defaultMinSize(minHeight = 54.dp)
+            .padding(horizontal = 10.dp),
         contentAlignment = Alignment.Center
     ) {
         NeonText(
             text = text,
             color = if (isPressed) Color.White else finalBorderColor,
-            fontSize = 15.sp,
+            fontSize = fontSize,
             fontWeight = FontWeight.Bold,
             glowColor = finalBorderColor
         )
@@ -262,6 +262,7 @@ fun NeonText(
         fontWeight = fontWeight,
         fontFamily = FontFamily.Monospace,
         maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis,
         style = TextStyle(
             shadow = Shadow(
                 color = glowColor.copy(alpha = 0.8f),

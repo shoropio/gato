@@ -1,4 +1,4 @@
-package com.example.ui
+package com.shoropio.gato.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
@@ -52,14 +51,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.theme.CyberObsidian
-import com.example.ui.theme.NeonAmber
-import com.example.ui.theme.NeonCyan
-import com.example.ui.theme.NeonEmerald
-import com.example.ui.theme.NeonMagenta
-import com.example.ui.theme.NeonPurple
-import com.example.viewmodel.GamePlayState
-import com.example.viewmodel.GameViewModel
+import com.shoropio.gato.ui.theme.CyberObsidian
+import com.shoropio.gato.ui.theme.NeonAmber
+import com.shoropio.gato.ui.theme.NeonCyan
+import com.shoropio.gato.ui.theme.NeonEmerald
+import com.shoropio.gato.ui.theme.NeonMagenta
+import com.shoropio.gato.ui.theme.NeonPurple
+import com.shoropio.gato.viewmodel.GamePlayState
+import com.shoropio.gato.viewmodel.GameViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.PI
@@ -498,7 +497,8 @@ fun GameScreen(
                             .fillMaxWidth(0.9f)
                             .height(58.dp),
                         borderColor = NeonAmber,
-                        glowColor = NeonAmber.copy(0.05f)
+                        glowColor = NeonAmber.copy(0.05f),
+                        contentPadding = 8.dp
                     ) {
                         Row(
                             modifier = Modifier
@@ -521,20 +521,22 @@ fun GameScreen(
                             NeonText(
                                 text = winText,
                                 color = bannerColor,
-                                fontSize = 11.sp,
-                                glowColor = bannerColor
+                                fontSize = 10.sp,
+                                glowColor = bannerColor,
+                                modifier = Modifier.weight(1f)
                             )
 
                             CyberButton(
-                                text = "Siguiente",
+                                text = "SIG.",
                                 onClick = {
                                     viewModel.resetBoard()
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 },
                                 color = NeonAmber,
                                 modifier = Modifier
-                                    .width(88.dp)
-                                    .height(38.dp)
+                                    .width(78.dp)
+                                    .height(36.dp),
+                                fontSize = 11.sp
                             )
                         }
                     }
