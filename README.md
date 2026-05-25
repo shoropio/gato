@@ -1,5 +1,13 @@
 # Gato
 
+![Android](https://img.shields.io/badge/Android-API%2024%2B-3DDC84?logo=android&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.2.10-7F52FF?logo=kotlin&logoColor=white)
+![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-UI-4285F4?logo=jetpackcompose&logoColor=white)
+![Material 3](https://img.shields.io/badge/Material%203-UI-6750A4?logo=materialdesign&logoColor=white)
+![Room](https://img.shields.io/badge/Room-Persistencia-0F9D58)
+![Gradle](https://img.shields.io/badge/Gradle-9.5.1-02303A?logo=gradle&logoColor=white)
+![Release](https://img.shields.io/github/v/release/shoropio/gato?label=release)
+
 Gato es un juego Android de tres en raya con interfaz neon cyberpunk, multijugador local, modos contra IA, historial de partidas, logros, respuesta sonora y estilos visuales personalizables.
 
 ## Características
