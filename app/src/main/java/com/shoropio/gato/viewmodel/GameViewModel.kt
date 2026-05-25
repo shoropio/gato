@@ -161,8 +161,9 @@ class GameViewModel(val repository: GameRepository) : ViewModel() {
 
         if (checkDrawResult()) return
 
-        // 4. Set Turn to Opponent
-        _currentPlayer.value = "O"
+        // 4. Set turn to the opponent. PvP must alternate both human players;
+        // vs AI still hands control to O so the AI can respond.
+        _currentPlayer.value = if (playerSymbol == "X") "O" else "X"
 
         // 5. If Player vs AI, immediately request AI play
         if (_gameMode.value == "vs_ai") {

@@ -282,7 +282,7 @@ fun GameScreen(
                         is GamePlayState.Won -> "FIN DE CANAL"
                         is GamePlayState.Draw -> "EMPATADO"
                         is GamePlayState.DemoRunning -> "IA ANALIZANDO..."
-                        else -> "TURNO AUTOMÁTICO: $currentPlayer"
+                        else -> if (mode == "pvp") "TURNO: $currentPlayer" else "TURNO AUTOMÁTICO: $currentPlayer"
                     }
                     val labelColor = if (currentPlayer == "X") primaryStyleColor else secondaryStyleColor
                     NeonText(
