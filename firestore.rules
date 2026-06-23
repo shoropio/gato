@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Perfiles de usuario - cualquier usuario autenticado puede leer,
+    // pero solo el dueño puede escribir su propio perfil
+    match /users/{uid} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == uid;
+      allow update: if request.auth != null && request.auth.uid == uid;
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Solicitudes de amistad
+    match /friendRequests/{uid} {
+      // El destinatario puede listar sus solicitudes
+      allow read: if request.auth != null && request.auth.uid == uid;
+      // Cualquier usuario autenticado puede escribir solicitudes
+      allow write: if request.auth != null;
+
+      match /received/{fromUid} {
+        allow read: if request.auth != null && request.auth.uid == uid;
+        allow create: if request.auth != null;
+        // Solo el destinatario puede borrar (rechazar/aceptar)
+        allow delete: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+
+    // Lista de amigos - cada usuario solo ve y administra sus propios amigos
+    match /friends/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+
+      match /friends/{friendUid} {
+        allow read: if request.auth != null && request.auth.uid == uid;
+        allow write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+
+    // Partidas online - solo los participantes pueden leer/escribir
+    match /matches/{matchId} {
+      allow read: if request.auth != null &&
+        request.auth.uid in resource.data.participants;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null &&
+        request.auth.uid in resource.data.participants;
+      allow delete: if request.auth != null &&
+        request.auth.uid in resource.data.participants;
+    }
+  }
+}

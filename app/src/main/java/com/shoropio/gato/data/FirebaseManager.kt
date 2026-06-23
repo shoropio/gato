@@ -208,6 +208,7 @@ object FirebaseManager {
             "playerO" to opponentUid,
             "playerXName" to userName,
             "playerOName" to opponentName,
+            "participants" to listOf(uid, opponentUid),
             "board" to List(9) { "" },
             "currentPlayer" to "X",
             "status" to "playing",
@@ -287,21 +288,22 @@ object FirebaseManager {
     }
 
     fun observeMyActiveMatches(): Flow<List<GameMatch>> = callbackFlow {
-        val uid = getCurrentUid() ?: {
-            trySend(emptyList()); close()
+        val uid = getCurrentUid()
+        if (uid == null) {
+            trySend(emptyList()); close(); return@callbackFlow
         }
         val listener = db.collection("matches")
-            .whereIn("status", listOf("playing", "waiting"))
+            .whereArrayContains("participants", uid)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) { return@addSnapshotListener }
                 if (snapshot == null) { return@addSnapshotListener }
                 val matches = snapshot.documents
-                    .filter { doc ->
-                        val x = doc.getString("playerX")
-                        val o = doc.getString("playerO")
-                        x == uid || o == uid
+                    .mapNotNull { doc ->
+                        val status = doc.getString("status")
+                        if (status == "playing" || status == "waiting") {
+                            snapshotToMatch(doc)
+                        } else null
                     }
-                    .map { snapshotToMatch(it) }
                 trySend(matches)
             }
         awaitClose { listener.remove() }
