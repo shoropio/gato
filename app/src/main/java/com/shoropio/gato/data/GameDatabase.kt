@@ -30,6 +30,9 @@ interface GameDao {
     @Query("SELECT * FROM unlocked_cosmetics")
     fun getAllCosmeticsFlow(): Flow<List<UnlockedCosmeticEntity>>
 
+    @Query("SELECT * FROM unlocked_cosmetics WHERE cosmeticId = :cosmeticId")
+    suspend fun getCosmetic(cosmeticId: String): UnlockedCosmeticEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCosmetic(cosmetic: UnlockedCosmeticEntity)
 
@@ -39,6 +42,9 @@ interface GameDao {
     // 3. Achievements Queries
     @Query("SELECT * FROM achievements")
     fun getAllAchievementsFlow(): Flow<List<AchievementEntity>>
+
+    @Query("SELECT isUnlocked FROM achievements WHERE achievementId = :id")
+    suspend fun isAchievementUnlocked(id: String): Boolean
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAchievement(achievement: AchievementEntity)
@@ -114,9 +120,9 @@ abstract class GameDatabase : RoomDatabase() {
             // Populate system customizations (default unlocked / lockable themes)
             val cosmetics = listOf(
                 UnlockedCosmeticEntity("theme_cyber_neon", isUnlocked = true), // default theme
-                UnlockedCosmeticEntity("theme_vaporwave", isUnlocked = false),
+                UnlockedCosmeticEntity("theme_vaporwave", isUnlocked = true),
                 UnlockedCosmeticEntity("theme_golden_prestige", isUnlocked = false),
-                UnlockedCosmeticEntity("theme_emerald_vault", isUnlocked = false),
+                UnlockedCosmeticEntity("theme_emerald_vault", isUnlocked = true),
                 
                 UnlockedCosmeticEntity("avatar_cyber_cat", isUnlocked = true), // default unlocked
                 UnlockedCosmeticEntity("avatar_glitch_gamer", isUnlocked = false),
@@ -148,7 +154,7 @@ abstract class GameDatabase : RoomDatabase() {
                 AchievementEntity(
                     "ach_beast_mode",
                     "Hacker de Código",
-                    "Derrota al algoritmo Imposible en modo vs IA.",
+                    "Empata o derrota al algoritmo Imposible en modo vs IA.",
                     maxProgress = 1
                 ),
                 AchievementEntity(

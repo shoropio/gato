@@ -57,6 +57,7 @@ fun MainMenuScreen(
     onNavigateToSettings: () -> Unit,
     onNavigateToStats: () -> Unit,
     onNavigateToCredits: () -> Unit,
+    onNavigateToOnline: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val settingsState by viewModel.settings.collectAsState()
@@ -220,6 +221,14 @@ fun MainMenuScreen(
                     modifier = Modifier.fillMaxWidth(0.95f),
                     isSecondary = true,
                     testTag = "btn_play_demo"
+                )
+
+                CyberButton(
+                    text = "ONLINE PvP (AMIGOS)",
+                    onClick = onNavigateToOnline,
+                    color = NeonEmerald,
+                    modifier = Modifier.fillMaxWidth(0.95f),
+                    testTag = "btn_play_online"
                 )
 
                 Row(

@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.shoropio.gato.audio.SoundSynthesizer
+import com.shoropio.gato.feedback.FeedbackSettings
 import com.shoropio.gato.ui.theme.CyberObsidian
 import com.shoropio.gato.ui.theme.NeonCyan
 import com.shoropio.gato.ui.theme.NeonMagenta
@@ -190,7 +191,9 @@ fun CyberButton(
 
     LaunchedEffect(isPressed) {
         if (isPressed) {
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            if (FeedbackSettings.isVibrationEnabled) {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            }
             scaleAnim.animateTo(0.94f, animationSpec = tween(100))
         } else {
             scaleAnim.animateTo(1f, animationSpec = tween(150))
@@ -224,7 +227,9 @@ fun CyberButton(
                 indication = null,
                 onClick = {
                     SoundSynthesizer.playClick()
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    if (FeedbackSettings.isVibrationEnabled) {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    }
                     onClick()
                 }
             )

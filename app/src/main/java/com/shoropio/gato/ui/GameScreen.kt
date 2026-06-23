@@ -14,6 +14,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -51,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.shoropio.gato.feedback.FeedbackSettings
 import com.shoropio.gato.ui.theme.CyberObsidian
 import com.shoropio.gato.ui.theme.NeonAmber
 import com.shoropio.gato.ui.theme.NeonCyan
@@ -68,8 +70,9 @@ import kotlin.random.Random
 
 // Debris details for fireworks/particles
 data class CoreParticle(
-    var x: Float,
-    var y: Float,
+    val cellIndex: Int,
+    var offsetX: Float,
+    var offsetY: Float,
     val vx: Float,
     val vy: Float,
     var alpha: Float,
@@ -117,14 +120,18 @@ fun GameScreen(
     // Emit particles when game is won
     LaunchedEffect(Unit) {
         viewModel.particleTrigger.collect { winCombo ->
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            // Spawn 45 neon particles spread randomly near screen center
+            if (FeedbackSettings.isVibrationEnabled) {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            }
+            // Spawn 45 neon particles spread around winning cells
             for (i in 0..45) {
                 val pColor = if (Random.nextBoolean()) primaryStyleColor else secondaryStyleColor
+                val cellIdx = winCombo[i % winCombo.size]
                 particles.add(
                     CoreParticle(
-                        x = 500f + Random.nextInt(-200, 200),
-                        y = 800f + Random.nextInt(-200, 200),
+                        cellIndex = cellIdx,
+                        offsetX = Random.nextFloat() * 160f - 80f,
+                        offsetY = Random.nextFloat() * 160f - 80f,
                         vx = Random.nextFloat() * 14f - 7f,
                         vy = Random.nextFloat() * 14f - 7f,
                         alpha = 1f,
@@ -142,8 +149,8 @@ fun GameScreen(
             while (particles.any { it.alpha > 0.02f }) {
                 delay(16)
                 particles.forEach { p ->
-                    p.x += p.vx
-                    p.y += p.vy
+                    p.offsetX += p.vx
+                    p.offsetY += p.vy
                     p.alpha = maxOf(0f, p.alpha - 0.022f)
                 }
             }
@@ -198,7 +205,9 @@ fun GameScreen(
                         text = "REINICIAR",
                         onClick = {
                             viewModel.resetBoard()
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            if (FeedbackSettings.isVibrationEnabled) {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            }
                         },
                         color = secondaryStyleColor,
                         modifier = Modifier
@@ -265,8 +274,8 @@ fun GameScreen(
                 // Turn Indicator Banner
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.6f)
-                        .height(35.dp)
+                        .fillMaxWidth(0.78f)
+                        .height(42.dp)
                         .background(
                             Brush.horizontalGradient(
                                 listOf(
@@ -289,13 +298,14 @@ fun GameScreen(
                         text = labelText,
                         color = if (gameState is GamePlayState.Active) labelColor else Color.White,
                         fontSize = 12.sp,
-                        glowColor = labelColor
+                        glowColor = labelColor,
+                        maxLines = 2
                     )
                 }
             }
 
             // 3D Fake Tilting Interactive Game Grid Board
-            Box(
+            BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
@@ -307,6 +317,11 @@ fun GameScreen(
                     .padding(8.dp),
                 contentAlignment = Alignment.Center
             ) {
+                val boardW = constraints.maxWidth.toFloat()
+                val boardH = constraints.maxHeight.toFloat()
+                val cellW = boardW / 3f
+                val cellH = boardH / 3f
+
                 // Background of the grid card
                 GlassCard(
                     modifier = Modifier.fillMaxSize(),
@@ -367,7 +382,9 @@ fun GameScreen(
                                                 if (gameState == GamePlayState.Active && symbol.isEmpty()) {
                                                     // Trigger tactile 3D rotational tilt offset
                                                     scope.launch {
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        if (FeedbackSettings.isVibrationEnabled) {
+                                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        }
                                                         val tiltX = when (row) {
                                                             0 -> -11f
                                                             2 -> 11f
@@ -471,10 +488,14 @@ fun GameScreen(
                 // Shimmering particle overlays
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     particles.forEach { p ->
+                        val row = p.cellIndex / 3
+                        val col = p.cellIndex % 3
+                        val cx = col * cellW + cellW / 2f + p.offsetX
+                        val cy = row * cellH + cellH / 2f + p.offsetY
                         drawCircle(
                             color = p.color.copy(alpha = p.alpha),
                             radius = p.size,
-                            center = Offset(p.x, p.y)
+                            center = Offset(cx, cy)
                         )
                     }
                 }
@@ -484,7 +505,7 @@ fun GameScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(64.dp),
+                    .height(82.dp),
                 contentAlignment = Alignment.Center
             ) {
                 this@Column.AnimatedVisibility(
@@ -495,7 +516,7 @@ fun GameScreen(
                     GlassCard(
                         modifier = Modifier
                             .fillMaxWidth(0.9f)
-                            .height(58.dp),
+                            .height(76.dp),
                         borderColor = NeonAmber,
                         glowColor = NeonAmber.copy(0.05f),
                         contentPadding = 8.dp
@@ -523,6 +544,7 @@ fun GameScreen(
                                 color = bannerColor,
                                 fontSize = 10.sp,
                                 glowColor = bannerColor,
+                                maxLines = 2,
                                 modifier = Modifier.weight(1f)
                             )
 
@@ -530,7 +552,9 @@ fun GameScreen(
                                 text = "SIG.",
                                 onClick = {
                                     viewModel.resetBoard()
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    if (FeedbackSettings.isVibrationEnabled) {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    }
                                 },
                                 color = NeonAmber,
                                 modifier = Modifier

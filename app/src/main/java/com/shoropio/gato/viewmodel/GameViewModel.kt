@@ -1,8 +1,6 @@
 package com.shoropio.gato.viewmodel
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -13,6 +11,7 @@ import com.shoropio.gato.data.GameRepository
 import com.shoropio.gato.data.GameResult
 import com.shoropio.gato.data.GameStatsEntity
 import com.shoropio.gato.data.UserSettingsEntity
+import com.shoropio.gato.feedback.FeedbackSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -87,6 +86,7 @@ class GameViewModel(val repository: GameRepository) : ViewModel() {
 
     // 4. Demo (AI vs AI) controller
     private var demoJob: Job? = null
+    private var aiJob: Job? = null
 
     init {
         // Observe settings changes and synchronize sound synthesizer state
@@ -94,6 +94,7 @@ class GameViewModel(val repository: GameRepository) : ViewModel() {
             repository.settings.collect { userSettings ->
                 userSettings?.let {
                     SoundSynthesizer.isSoundEnabled = it.soundOn
+                    FeedbackSettings.isVibrationEnabled = it.vibrationOn
                     if (it.soundOn) {
                         SoundSynthesizer.startAmbientMusic()
                     } else {
@@ -126,6 +127,7 @@ class GameViewModel(val repository: GameRepository) : ViewModel() {
      * Resets board cells and makes starting turn "X".
      */
     fun resetBoard() {
+        stopAiTurn()
         stopDemoPlay()
         _board.value = Array(9) { "" }
         _currentPlayer.value = "X"
@@ -133,9 +135,6 @@ class GameViewModel(val repository: GameRepository) : ViewModel() {
         
         if (_gameMode.value == "demo") {
             startDemoPlay()
-        } else if (_gameMode.value == "vs_ai" && _currentPlayer.value == "O") {
-            // Trigger AI move if somehow AI starts
-            triggerAiMoveIfNeeded()
         }
     }
 
@@ -175,7 +174,8 @@ class GameViewModel(val repository: GameRepository) : ViewModel() {
         if (_gamePlayState.value != GamePlayState.Active) return
         if (_currentPlayer.value != "O") return
 
-        viewModelScope.launch {
+        stopAiTurn()
+        aiJob = viewModelScope.launch {
             _gamePlayState.value = GamePlayState.DemoRunning // Temporarily block overlay click
             delay(580) // AI mental delay for realistic immersion
             
@@ -200,6 +200,7 @@ class GameViewModel(val repository: GameRepository) : ViewModel() {
             } else {
                 _gamePlayState.value = GamePlayState.Active
             }
+            aiJob = null
         }
     }
 
@@ -243,6 +244,11 @@ class GameViewModel(val repository: GameRepository) : ViewModel() {
     private fun stopDemoPlay() {
         demoJob?.cancel()
         demoJob = null
+    }
+
+    private fun stopAiTurn() {
+        aiJob?.cancel()
+        aiJob = null
     }
 
     /**
@@ -490,8 +496,25 @@ class GameViewModel(val repository: GameRepository) : ViewModel() {
         }
     }
 
+    fun toggleDarkTheme() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val current = getSettings() ?: UserSettingsEntity()
+            val updated = current.copy(darkThemeOn = !current.darkThemeOn)
+            repository.saveSettings(updated)
+        }
+    }
+
+    fun toggleDynamicColors() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val current = getSettings() ?: UserSettingsEntity()
+            val updated = current.copy(dynamicColorsOn = !current.dynamicColorsOn)
+            repository.saveSettings(updated)
+        }
+    }
+
     fun setBoardStyle(style: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            if (!repository.isCosmeticUnlocked(style.toThemeCosmeticId())) return@launch
             val current = getSettings() ?: UserSettingsEntity()
             val updated = current.copy(boardStyle = style)
             repository.saveSettings(updated)
@@ -500,6 +523,7 @@ class GameViewModel(val repository: GameRepository) : ViewModel() {
 
     fun setAvatar(avatar: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            if (!repository.isCosmeticUnlocked(avatar)) return@launch
             val current = getSettings() ?: UserSettingsEntity()
             val updated = current.copy(selectedAvatar = avatar)
             repository.saveSettings(updated)
@@ -512,8 +536,18 @@ class GameViewModel(val repository: GameRepository) : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
+        stopAiTurn()
         stopDemoPlay()
         SoundSynthesizer.stopAmbientMusic()
+    }
+
+    private fun String.toThemeCosmeticId(): String {
+        return when (this) {
+            "vaporwave" -> "theme_vaporwave"
+            "emerald" -> "theme_emerald_vault"
+            "gold" -> "theme_golden_prestige"
+            else -> "theme_cyber_neon"
+        }
     }
 
     companion object {

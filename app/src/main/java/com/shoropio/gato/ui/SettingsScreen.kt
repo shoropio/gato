@@ -52,11 +52,16 @@ fun SettingsScreen(
 
     val currentSound = settingsState?.soundOn ?: true
     val currentVib = settingsState?.vibrationOn ?: true
+    val currentDark = settingsState?.darkThemeOn ?: true
+    val currentDynamic = settingsState?.dynamicColorsOn ?: false
     val currentBoardStyle = settingsState?.boardStyle ?: "default"
     val currentAvatar = settingsState?.selectedAvatar ?: "avatar_cyber_cat"
 
-    // Check if Golden Prestige is unlocked in DB
-    val isGoldUnlocked = cosmeticsList.find { it.cosmeticId == "theme_golden_prestige" }?.isUnlocked ?: false
+    fun isUnlocked(cosmeticId: String): Boolean {
+        return cosmeticId == "theme_cyber_neon" ||
+            cosmeticId == "avatar_cyber_cat" ||
+            cosmeticsList.find { it.cosmeticId == cosmeticId }?.isUnlocked == true
+    }
 
     CyberGridBackground(modifier = modifier) {
         Column(
@@ -160,6 +165,60 @@ fun SettingsScreen(
                             )
                         )
                     }
+
+                    // Dark Theme Toggle
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            NeonText(text = "MODO OSCURO", color = Color.White, fontSize = 14.sp)
+                            NeonText(
+                                text = "Alterna entre tema oscuro y claro",
+                                color = Color.Gray,
+                                fontSize = 10.sp
+                            )
+                        }
+                        Switch(
+                            checked = currentDark,
+                            onCheckedChange = { viewModel.toggleDarkTheme() },
+                            modifier = Modifier.testTag("switch_dark_theme"),
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = NeonPurple,
+                                checkedTrackColor = Color(0x339D4EDD),
+                                uncheckedThumbColor = Color.Gray,
+                                uncheckedTrackColor = Color(0x1AFFFFFF)
+                            )
+                        )
+                    }
+
+                    // Dynamic Colors Toggle
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            NeonText(text = "COLORES DINÁMICOS", color = Color.White, fontSize = 14.sp)
+                            NeonText(
+                                text = "Usa paleta de colores del sistema (Android 12+)",
+                                color = Color.Gray,
+                                fontSize = 10.sp
+                            )
+                        }
+                        Switch(
+                            checked = currentDynamic,
+                            onCheckedChange = { viewModel.toggleDynamicColors() },
+                            modifier = Modifier.testTag("switch_dynamic_colors"),
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = NeonEmerald,
+                                checkedTrackColor = Color(0x3300FF87),
+                                uncheckedThumbColor = Color.Gray,
+                                uncheckedTrackColor = Color(0x1AFFFFFF)
+                            )
+                        )
+                    }
                 }
             }
 
@@ -184,7 +243,13 @@ fun SettingsScreen(
                     )
 
                     stylesList.forEach { (styleKey, styleLabel, colors) ->
-                        val isLocked = styleKey == "gold" && !isGoldUnlocked
+                        val cosmeticId = when (styleKey) {
+                            "vaporwave" -> "theme_vaporwave"
+                            "emerald" -> "theme_emerald_vault"
+                            "gold" -> "theme_golden_prestige"
+                            else -> "theme_cyber_neon"
+                        }
+                        val isLocked = !isUnlocked(cosmeticId)
                         val isSelected = currentBoardStyle == styleKey && !isLocked
 
                         Row(
@@ -210,9 +275,10 @@ fun SettingsScreen(
                                 )
                                 if (isLocked) {
                                     NeonText(
-                                        text = "🔓 Desbloqueo: Vencer a la IA Imposible VS IA",
+                                        text = "🔓 Desbloqueo: empata o vence a la IA Imposible",
                                         color = NeonAmber,
-                                        fontSize = 10.sp
+                                        fontSize = 10.sp,
+                                        maxLines = 2
                                     )
                                 } else {
                                     Row(
@@ -269,11 +335,12 @@ fun SettingsScreen(
 
                     avatars.forEach { (avatarKey, avatarEmoji) ->
                         val isSelected = currentAvatar == avatarKey
+                        val isLocked = !isUnlocked(avatarKey)
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
                                 .clip(RectangleShape)
-                                .clickable { viewModel.setAvatar(avatarKey) }
+                                .clickable(enabled = !isLocked) { viewModel.setAvatar(avatarKey) }
                                 .padding(6.dp)
                         ) {
                             Box(
@@ -283,18 +350,19 @@ fun SettingsScreen(
                                     .background(if (isSelected) NeonCyan.copy(alpha = 0.15f) else Color(0x1AFFFFFF))
                                     .border(
                                         width = 1.5.dp,
-                                        color = if (isSelected) NeonCyan else Color.Transparent,
+                                        color = if (isSelected) NeonCyan else if (isLocked) Color.DarkGray else Color.Transparent,
                                         shape = RectangleShape
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(text = avatarEmoji, fontSize = 24.sp)
+                                Text(text = if (isLocked) "🔒" else avatarEmoji, fontSize = 24.sp)
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             NeonText(
                                 text = avatarKey.replace("avatar_", "").replace("_", " ").uppercase(),
-                                color = if (isSelected) NeonCyan else Color.Gray,
-                                fontSize = 9.sp
+                                color = if (isLocked) Color.DarkGray else if (isSelected) NeonCyan else Color.Gray,
+                                fontSize = 9.sp,
+                                maxLines = 2
                             )
                         }
                     }

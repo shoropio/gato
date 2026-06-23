@@ -30,9 +30,7 @@ private val openSourceCredits = listOf(
     "Room Database",
     "Kotlin Coroutines",
     "Kotlin Symbol Processing",
-    "Moshi",
-    "OkHttp",
-    "Retrofit",
+    "Firebase Authentication y Firestore",
     "Robolectric",
     "Roborazzi"
 )

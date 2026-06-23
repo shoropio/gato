@@ -28,6 +28,11 @@ class GameRepository(private val gameDao: GameDao) {
         gameDao.unlockCosmetic(cosmeticId)
     }
 
+    suspend fun isCosmeticUnlocked(cosmeticId: String): Boolean {
+        if (cosmeticId == "theme_cyber_neon" || cosmeticId == "avatar_cyber_cat") return true
+        return gameDao.getCosmetic(cosmeticId)?.isUnlocked == true
+    }
+
     suspend fun updateAchievementProgress(id: String, progress: Int) {
         gameDao.updateAchievementProgress(id, progress)
     }
@@ -100,7 +105,7 @@ class GameRepository(private val gameDao: GameDao) {
         }
 
         if (modeId == "vs_ai_impossible") {
-            if (stats.wins >= 1) {
+            if (stats.wins >= 1 || stats.draws >= 1) {
                 unlockAchievement("ach_beast_mode")
                 // Unlock reward theme: Golden Prestige
                 unlockCosmetic("theme_golden_prestige")
