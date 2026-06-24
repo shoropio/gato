@@ -261,14 +261,14 @@ fun MainMenuScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(36.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Futuristic version tag
             NeonText(
                 text = "© 2026 Shoropio Corporation. Todos los derechos reservados.",
                 color = Color.Gray.copy(alpha = 0.8f),
                 fontSize = 8.sp,
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.padding(bottom = 24.dp)
             )
         }
 
