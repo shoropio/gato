@@ -8,6 +8,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import com.shoropio.gato.notification.GatoMessagingService
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -47,11 +48,15 @@ object FirebaseManager {
 
     suspend fun createUserProfile(displayName: String) {
         val uid = getCurrentUid() ?: return
-        val user = mapOf(
+        val token = GatoMessagingService.fcmToken
+        val user = mutableMapOf<String, Any>(
             "displayName" to displayName,
             "isOnline" to true,
             "lastSeen" to FieldValue.serverTimestamp()
         )
+        if (token != null) {
+            user["fcmToken"] = token
+        }
         db.collection("users").document(uid).set(user).await()
     }
 
