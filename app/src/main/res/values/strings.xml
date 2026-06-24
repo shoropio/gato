@@ -1,3 +1,179 @@
 <resources>
     <string name="app_name">Gato</string>
+
+    <!-- Main Menu -->
+    <string name="menu_title">GATO</string>
+    <string name="menu_subtitle">MATRIX EDITION</string>
+    <string name="menu_cyberpayer">CYBERPAYER #901</string>
+    <string name="menu_avatar">AVATAR:</string>
+    <string name="menu_active_streak">ACTIVE STREAK:</string>
+    <string name="menu_play_vs_ai">PLAY VS AI</string>
+    <string name="menu_play_pvp">LOCAL MULTIPLAYER</string>
+    <string name="menu_play_demo">SPECTATOR MODE (AI vs AI)</string>
+    <string name="menu_play_online">ONLINE PvP (FRIENDS)</string>
+    <string name="menu_settings">SETTINGS</string>
+    <string name="menu_stats">STATS/ACHIEVEMENTS</string>
+    <string name="menu_credits">CREDITS</string>
+    <string name="menu_copyright">© 2026 Shoropio Corporation. All rights reserved.</string>
+
+    <!-- Difficulty Dialog -->
+    <string name="difficulty_title">DIFFICULTY SECTOR</string>
+    <string name="difficulty_subtitle">Select AI network:</string>
+    <string name="difficulty_easy">EASY AI</string>
+    <string name="difficulty_normal">MIXED AI</string>
+    <string name="difficulty_hard">CALCULATED AI</string>
+    <string name="difficulty_impossible">MINIMAX ALGORITHM</string>
+    <string name="difficulty_cancel">CANCEL</string>
+
+    <!-- Settings -->
+    <string name="settings_title">SETTINGS</string>
+    <string name="settings_back"><![CDATA[< BACK]]></string>
+    <string name="settings_section_hardware">DEVICES &amp; FEEDBACK</string>
+    <string name="settings_sound_label">SYNTHESIZED SOUND</string>
+    <string name="settings_sound_desc">Procedurally generated audio tones while playing</string>
+    <string name="settings_vibration_label">HAPTIC RIPPLE VIBRATION</string>
+    <string name="settings_vibration_desc">Mechanical pulse when touching cells and buttons</string>
+    <string name="settings_dark_theme_label">DARK MODE</string>
+    <string name="settings_dark_theme_desc">Toggle between dark and light theme</string>
+    <string name="settings_dynamic_colors_label">DYNAMIC COLORS</string>
+    <string name="settings_dynamic_colors_desc">Use system color palette (Android 12+)</string>
+    <string name="settings_section_style">INTERFACE &amp; NEON STYLE</string>
+    <string name="settings_section_avatar">SELECT CYBORG IDENTITY</string>
+    <string name="settings_style_cyber_neon">NEON CYBORG (Default)</string>
+    <string name="settings_style_vaporwave">SUNSET VAPORWAVE</string>
+    <string name="settings_style_emerald">GREEN ESCREVER (Emerald)</string>
+    <string name="settings_style_gold">GOLDEN PRESTIGE</string>
+    <string name="settings_style_locked">Unlock: draw or beat Impossible AI</string>
+    <string name="settings_style_active">✔ ACTIVE</string>
+
+    <!-- Game Screen -->
+    <string name="game_back">BACK</string>
+    <string name="game_reset">RESTART</string>
+    <string name="game_next">NEXT</string>
+    <string name="game_turn_prefix">TURN: </string>
+    <string name="game_turn_auto">AUTO TURN: </string>
+    <string name="game_ai_thinking">AI ANALYZING…</string>
+    <string name="game_finished">END OF CHANNEL</string>
+    <string name="game_draw">DRAW</string>
+    <string name="game_player_x">PLAYER X</string>
+    <string name="game_player_o">PLAYER O</string>
+    <string name="game_you_x">YOU (X)</string>
+    <string name="game_code_o">CODE (O)</string>
+    <string name="game_ai_o">AI O</string>
+    <string name="game_draws">DRAWS</string>
+    <string name="game_mode_pvp">MODE: LOCAL PvP</string>
+    <string name="game_mode_demo">DEMO: AI vs AI</string>
+    <string name="game_mode_vs_ai">VS AI: </string>
+    <string name="game_victory_pvp">VICTORY FOR PLAYER %s!</string>
+    <string name="game_victory_x">SYSTEM DEFEATED! (X WINS)</string>
+    <string name="game_victory_o">AI BEAT THE USER! (O WINS)</string>
+    <string name="game_electronic_draw">ELECTRONIC DRAW</string>
+
+    <!-- Stats -->
+    <string name="stats_title">RECORDS</string>
+    <string name="stats_back"><![CDATA[< BACK]]></string>
+    <string name="stats_tab_history">HISTORY</string>
+    <string name="stats_tab_achievements">ACHIEVEMENTS</string>
+    <string name="stats_label_pvp">LOCAL PvP MULTIPLAYER</string>
+    <string name="stats_label_vs_ai_easy">CODE VS EASY AI</string>
+    <string name="stats_label_vs_ai_normal">CODE VS NORMAL AI</string>
+    <string name="stats_label_vs_ai_hard">CODE VS HARD AI</string>
+    <string name="stats_label_vs_ai_impossible">CODE VS IMPOSSIBLE AI</string>
+    <string name="stats_label_demo">AI SPECTATOR DUELS</string>
+    <string name="stats_games">GAMES</string>
+    <string name="stats_wins">WINS</string>
+    <string name="stats_losses">LOSSES</string>
+    <string name="stats_draws">DRAWS</string>
+    <string name="stats_streak">CURRENT / MAX STREAK:</string>
+    <string name="stats_unlocked">UNLOCKED</string>
+    <string name="stats_progress">PROGRESS:</string>
+    <string name="stats_recent">RECENT</string>
+
+    <!-- Achievements -->
+    <string name="ach_first_steps_title">First Steps</string>
+    <string name="ach_first_steps_desc">Play your first game of Gato in any mode.</string>
+    <string name="ach_pvp_champion_title">Couch Champion</string>
+    <string name="ach_pvp_champion_desc">Win 5 games in Player vs Player mode.</string>
+    <string name="ach_beat_normal_title">Organic Brain</string>
+    <string name="ach_beat_normal_desc">Beat the AI on Normal difficulty or higher.</string>
+    <string name="ach_beast_mode_title">Code Hacker</string>
+    <string name="ach_beast_mode_desc">Draw or beat the Impossible algorithm in vs AI mode.</string>
+    <string name="ach_streak_3_title">Hyper-Streak</string>
+    <string name="ach_streak_3_desc">Get a streak of 3 consecutive wins.</string>
+    <string name="ach_demo_watcher_title">Future Spectator</string>
+    <string name="ach_demo_watcher_desc">Watch a full AI vs AI demonstration.</string>
+
+    <!-- Online -->
+    <string name="online_title">ONLINE GAME</string>
+    <string name="online_name_prompt">Enter your name to connect:</string>
+    <string name="online_connect">CONNECT</string>
+    <string name="online_connecting">CONNECTING…</string>
+    <string name="online_cancel">CANCEL</string>
+    <string name="online_name_error">Enter a name</string>
+    <string name="online_connection_error">Connection error: %s</string>
+
+    <!-- Friends -->
+    <string name="friends_title">FRIENDS</string>
+    <string name="friends_back"><![CDATA[< BACK]]></string>
+    <string name="friends_requests">PENDING REQUESTS</string>
+    <string name="friends_my_friends">MY FRIENDS</string>
+    <string name="friends_add">+ ADD</string>
+    <string name="friends_close">CLOSE</string>
+    <string name="friends_search_placeholder">Search by name…</string>
+    <string name="friends_search">SEARCH</string>
+    <string name="friends_send_request">SEND REQ.</string>
+    <string name="friends_play">PLAY</string>
+    <string name="friends_no_results">No results</string>
+    <string name="friends_empty">You have no friends yet.\nUse \'ADD\' to search and send requests.</string>
+    <string name="friends_online">ONLINE</string>
+    <string name="friends_offline">OFFLINE</string>
+    <string name="friends_active_matches">ACTIVE MATCHES</string>
+    <string name="friends_join">JOIN</string>
+
+    <!-- Online Game -->
+    <string name="online_game_title">ONLINE PvP</string>
+    <string name="online_game_exit">EXIT</string>
+    <string name="online_game_vs">VS</string>
+    <string name="online_game_you">YOU</string>
+    <string name="online_game_rival">RIVAL</string>
+    <string name="online_game_loading">LOADING MATCH…</string>
+    <string name="online_game_waiting">WAITING FOR CONNECTION…</string>
+    <string name="online_game_your_turn">YOUR TURN (%s)</string>
+    <string name="online_game_waiting_move">WAITING FOR %s\'s MOVE…</string>
+    <string name="online_game_victory">COSMIC VICTORY!</string>
+    <string name="online_game_defeat">TOTAL DEFEAT</string>
+    <string name="online_game_draw">ELECTRONIC DRAW</string>
+    <string name="online_game_tap">TAP A CELL</string>
+    <string name="online_game_waiting_opponent">WAITING…</string>
+
+    <!-- Online Login -->
+    <string name="online_login_title">ONLINE GAME</string>
+    <string name="online_login_name_hint">Your name</string>
+    <string name="online_login_connect">CONNECT</string>
+    <string name="online_login_cancel">CANCEL</string>
+
+    <!-- Online Lobby -->
+    <string name="lobby_title">ONLINE LOBBY</string>
+    <string name="lobby_back"><![CDATA[< BACK]]></string>
+    <string name="lobby_description">Play against friends in real time.\nInvite a friend from the list and wait for their move.</string>
+    <string name="lobby_go_friends">MY FRIENDS</string>
+
+    <!-- Credits -->
+    <string name="credits_title">CREDITS</string>
+    <string name="credits_back"><![CDATA[< BACK]]></string>
+    <string name="credits_section">OPEN SOURCE</string>
+    <string name="credits_copyright">© 2026 Shoropio Corporation. All rights reserved.</string>
+
+    <!-- Open Source Libraries -->
+    <string name="oss_androidx">AndroidX Core, Activity, Lifecycle and Navigation</string>
+    <string name="oss_compose">Jetpack Compose UI and Material 3</string>
+    <string name="oss_room">Room Database</string>
+    <string name="oss_coroutines">Kotlin Coroutines</string>
+    <string name="oss_ksp">Kotlin Symbol Processing (KSP)</string>
+    <string name="oss_firebase">Firebase Authentication and Firestore</string>
+    <string name="oss_robolectric">Robolectric</string>
+    <string name="oss_roborazzi">Roborazzi</string>
+
+    <!-- Easter egg / Meta -->
+    <string name="shoropio_corp">SHOROPIO CORPORATION</string>
 </resources>
