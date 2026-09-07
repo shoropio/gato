@@ -241,6 +241,11 @@ class GameViewModel(val repository: GameRepository) : ViewModel() {
         }
     }
 
+    fun stopGame() {
+        stopDemoPlay()
+        stopAiTurn()
+    }
+
     private fun stopDemoPlay() {
         demoJob?.cancel()
         demoJob = null

@@ -1,8 +1,13 @@
 package com.shoropio.gato.data
 
+import android.content.Context
 import android.util.Log
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -12,6 +17,7 @@ import com.shoropio.gato.notification.GatoMessagingService
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 
 @Suppress("UNCHECKED_CAST")
@@ -19,7 +25,9 @@ import kotlinx.coroutines.tasks.await
 data class OnlineUser(
     val uid: String = "",
     val displayName: String = "",
-    val isOnline: Boolean = false
+    val email: String = "",
+    val isOnline: Boolean = false,
+    val photoUrl: String? = null
 )
 
 data class GameMatch(
@@ -36,28 +44,56 @@ data class GameMatch(
 
 object FirebaseManager {
     private const val TAG = "FirebaseManager"
+    private const val WEB_CLIENT_ID = "332656003926-lbu2v23sgmb2bmv9jhqju6kenrbrndl1.apps.googleusercontent.com"
+
     val auth: FirebaseAuth = Firebase.auth
     val db: FirebaseFirestore = Firebase.firestore
 
-    suspend fun signInAnonymously(): Result<String> = runCatching {
-        val result = auth.signInAnonymously().await()
-        result.user?.uid ?: throw Exception("No se pudo autenticar")
-    }
+    fun isSignedIn(): Boolean = auth.currentUser != null
 
     fun getCurrentUid(): String? = auth.currentUser?.uid
 
-    suspend fun createUserProfile(displayName: String) {
+    fun getCurrentDisplayName(): String? = auth.currentUser?.displayName
+
+    fun getCurrentPhotoUrl(): String? = auth.currentUser?.photoUrl?.toString()
+
+    fun getGoogleSignInClient(context: Context): GoogleSignInClient {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(WEB_CLIENT_ID)
+            .requestEmail()
+            .requestProfile()
+            .build()
+        return GoogleSignIn.getClient(context, gso)
+    }
+
+    suspend fun signInWithGoogle(idToken: String): Result<String> = runCatching {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        val result = auth.signInWithCredential(credential).await()
+        result.user?.uid ?: throw Exception("No se pudo autenticar con Google")
+    }
+
+    suspend fun createUserProfile() {
         val uid = getCurrentUid() ?: return
+        val user = auth.currentUser ?: return
         val token = GatoMessagingService.fcmToken
-        val user = mutableMapOf<String, Any>(
+        val displayName = user.displayName ?: "Jugador"
+        val profile = mutableMapOf<String, Any>(
             "displayName" to displayName,
+            "searchName" to displayName.lowercase(),
             "isOnline" to true,
             "lastSeen" to FieldValue.serverTimestamp()
         )
+        user.email?.let { profile["email"] = it.lowercase() }
+        user.photoUrl?.let { profile["photoUrl"] = it.toString() }
         if (token != null) {
-            user["fcmToken"] = token
+            profile["fcmToken"] = token
         }
-        db.collection("users").document(uid).set(user).await()
+        db.collection("users").document(uid).set(profile).await()
+    }
+
+    fun signOut(context: Context) {
+        auth.signOut()
+        getGoogleSignInClient(context).signOut()
     }
 
     suspend fun setOnlineStatus(isOnline: Boolean) {
@@ -70,20 +106,42 @@ object FirebaseManager {
 
     suspend fun searchUsers(query: String): List<OnlineUser> {
         if (query.isBlank()) return emptyList()
-        val snapshot = db.collection("users")
-            .whereGreaterThanOrEqualTo("displayName", query)
-            .whereLessThanOrEqualTo("displayName", query + "\uf8ff")
-            .get().await()
         val currentUid = getCurrentUid()
-        return snapshot.documents.mapNotNull { doc ->
+        val q = query.lowercase()
+
+        // Search by displayName prefix (case-insensitive via searchName field)
+        val nameSnapshot = db.collection("users")
+            .whereGreaterThanOrEqualTo("searchName", q)
+            .whereLessThanOrEqualTo("searchName", q + "\uf8ff")
+            .get().await()
+
+        // Search by email prefix (case-insensitive)
+        val emailSnapshot = db.collection("users")
+            .whereGreaterThanOrEqualTo("email", q)
+            .whereLessThanOrEqualTo("email", q + "\uf8ff")
+            .get().await()
+
+        // Merge & deduplicate
+        val seen = mutableSetOf<String>()
+        val results = mutableListOf<OnlineUser>()
+
+        fun addUser(doc: com.google.firebase.firestore.DocumentSnapshot) {
             val uid = doc.id
-            if (uid == currentUid) return@mapNotNull null
-            OnlineUser(
-                uid = uid,
-                displayName = doc.getString("displayName") ?: "",
-                isOnline = doc.getBoolean("isOnline") ?: false
+            if (uid == currentUid || !seen.add(uid)) return
+            results.add(
+                OnlineUser(
+                    uid = uid,
+                    displayName = doc.getString("displayName") ?: "",
+                    email = doc.getString("email") ?: "",
+                    isOnline = doc.getBoolean("isOnline") ?: false
+                )
             )
         }
+
+        for (doc in nameSnapshot.documents) addUser(doc)
+        for (doc in emailSnapshot.documents) addUser(doc)
+
+        return results
     }
 
     suspend fun sendFriendRequest(toUid: String) {
@@ -96,17 +154,23 @@ object FirebaseManager {
 
     suspend fun acceptFriendRequest(fromUid: String) {
         val uid = getCurrentUid() ?: return
-        // Add to both users' friends subcollections
-        db.collection("friends").document(uid)
-            .collection("friends").document(fromUid)
-            .set(mapOf("addedAt" to FieldValue.serverTimestamp())).await()
-        db.collection("friends").document(fromUid)
-            .collection("friends").document(uid)
-            .set(mapOf("addedAt" to FieldValue.serverTimestamp())).await()
-        // Remove the request
-        db.collection("friendRequests").document(uid)
-            .collection("received").document(fromUid)
-            .delete().await()
+        val batch = db.batch()
+        val ts = FieldValue.serverTimestamp()
+        batch.set(
+            db.collection("friends").document(uid)
+                .collection("friends").document(fromUid),
+            mapOf("addedAt" to ts)
+        )
+        batch.set(
+            db.collection("friends").document(fromUid)
+                .collection("friends").document(uid),
+            mapOf("addedAt" to ts)
+        )
+        batch.delete(
+            db.collection("friendRequests").document(uid)
+                .collection("received").document(fromUid)
+        )
+        batch.commit().await()
     }
 
     suspend fun rejectFriendRequest(fromUid: String) {
@@ -128,6 +192,7 @@ object FirebaseManager {
             OnlineUser(
                 uid = doc.id,
                 displayName = doc.getString("displayName") ?: "",
+                email = doc.getString("email") ?: "",
                 isOnline = doc.getBoolean("isOnline") ?: false
             )
         }
@@ -159,6 +224,7 @@ object FirebaseManager {
                             OnlineUser(
                                 uid = doc.id,
                                 displayName = doc.getString("displayName") ?: "",
+                                email = doc.getString("email") ?: "",
                                 isOnline = doc.getBoolean("isOnline") ?: false
                             )
                         }
@@ -188,6 +254,7 @@ object FirebaseManager {
                             OnlineUser(
                                 uid = doc.id,
                                 displayName = doc.getString("displayName") ?: "",
+                                email = doc.getString("email") ?: "",
                                 isOnline = doc.getBoolean("isOnline") ?: false
                             )
                         }
@@ -312,6 +379,136 @@ object FirebaseManager {
                 trySend(matches)
             }
         awaitClose { listener.remove() }
+    }
+
+    // ─── Sync: Game Stats ─────────────────────────────────────────
+    suspend fun syncStats(stats: GameStatsEntity) {
+        val uid = getCurrentUid() ?: return
+        db.collection("users").document(uid)
+            .collection("stats").document(stats.modeId)
+            .set(stats).await()
+    }
+
+    suspend fun syncAllStats(statsList: List<GameStatsEntity>) {
+        val uid = getCurrentUid() ?: return
+        val batch = db.batch()
+        val userRef = db.collection("users").document(uid)
+        for (stats in statsList) {
+            batch.set(userRef.collection("stats").document(stats.modeId), stats)
+        }
+        batch.commit().await()
+    }
+
+    suspend fun loadStatsFromFirebase(): List<GameStatsEntity> {
+        val uid = getCurrentUid() ?: return emptyList()
+        val snapshot = db.collection("users").document(uid)
+            .collection("stats").get().await()
+        return snapshot.documents.mapNotNull { doc ->
+            doc.toObject(GameStatsEntity::class.java)?.copy(modeId = doc.id)
+        }
+    }
+
+    // ─── Sync: Cosmetics ──────────────────────────────────────────
+    suspend fun syncCosmetic(cosmetic: UnlockedCosmeticEntity) {
+        val uid = getCurrentUid() ?: return
+        db.collection("users").document(uid)
+            .collection("cosmetics").document(cosmetic.cosmeticId)
+            .set(mapOf("isUnlocked" to cosmetic.isUnlocked)).await()
+    }
+
+    suspend fun syncAllCosmetics(cosmetics: List<UnlockedCosmeticEntity>) {
+        val uid = getCurrentUid() ?: return
+        val batch = db.batch()
+        val userRef = db.collection("users").document(uid)
+        for (item in cosmetics) {
+            batch.set(userRef.collection("cosmetics").document(item.cosmeticId),
+                mapOf("isUnlocked" to item.isUnlocked))
+        }
+        batch.commit().await()
+    }
+
+    suspend fun loadCosmeticsFromFirebase(): Map<String, Boolean> {
+        val uid = getCurrentUid() ?: return emptyMap()
+        val snapshot = db.collection("users").document(uid)
+            .collection("cosmetics").get().await()
+        return snapshot.documents.associate { doc ->
+            doc.id to (doc.getBoolean("isUnlocked") ?: false)
+        }
+    }
+
+    // ─── Sync: Achievements ───────────────────────────────────────
+    suspend fun syncAchievement(achievement: AchievementEntity) {
+        val uid = getCurrentUid() ?: return
+        db.collection("users").document(uid)
+            .collection("achievements").document(achievement.achievementId)
+            .set(achievement).await()
+    }
+
+    suspend fun syncAllAchievements(achievements: List<AchievementEntity>) {
+        val uid = getCurrentUid() ?: return
+        val batch = db.batch()
+        val userRef = db.collection("users").document(uid)
+        for (ach in achievements) {
+            batch.set(userRef.collection("achievements").document(ach.achievementId), ach)
+        }
+        batch.commit().await()
+    }
+
+    suspend fun loadAchievementsFromFirebase(): List<AchievementEntity> {
+        val uid = getCurrentUid() ?: return emptyList()
+        val snapshot = db.collection("users").document(uid)
+            .collection("achievements").get().await()
+        return snapshot.documents.mapNotNull { doc ->
+            doc.toObject(AchievementEntity::class.java)?.copy(achievementId = doc.id)
+        }
+    }
+
+    // ─── Sync: Settings ───────────────────────────────────────────
+    suspend fun syncSettings(settings: UserSettingsEntity) {
+        val uid = getCurrentUid() ?: return
+        db.collection("users").document(uid)
+            .collection("settings").document("singleton")
+            .set(settings).await()
+    }
+
+    suspend fun loadSettingsFromFirebase(): UserSettingsEntity? {
+        val uid = getCurrentUid() ?: return null
+        val doc = db.collection("users").document(uid)
+            .collection("settings").document("singleton").get().await()
+        return doc.toObject(UserSettingsEntity::class.java)
+    }
+
+    // ─── Bulk sync: push all local data to Firebase ───────────────
+    suspend fun pushAllToFirebase(repository: GameRepository) {
+        val allStats = repository.allStats.first()
+        val allCosmetics = repository.allCosmetics.first()
+        val allAchievements = repository.allAchievements.first()
+        val settings = repository.settings.first()
+
+        if (allStats.isNotEmpty()) syncAllStats(allStats)
+        if (allCosmetics.isNotEmpty()) syncAllCosmetics(allCosmetics)
+        if (allAchievements.isNotEmpty()) syncAllAchievements(allAchievements)
+        if (settings != null) syncSettings(settings)
+    }
+
+    // ─── Bulk sync: pull all Firebase data into Room ──────────────
+    suspend fun pullAllFromFirebase(repository: GameRepository) {
+        val cloudStats = loadStatsFromFirebase()
+        for (stats in cloudStats) {
+            repository.insertOrUpdateStats(stats)
+        }
+        val cloudCosmetics = loadCosmeticsFromFirebase()
+        for ((id, unlocked) in cloudCosmetics) {
+            if (unlocked) repository.unlockCosmetic(id)
+        }
+        val cloudAchievements = loadAchievementsFromFirebase()
+        for (ach in cloudAchievements) {
+            repository.insertAchievement(ach)
+        }
+        val cloudSettings = loadSettingsFromFirebase()
+        if (cloudSettings != null) {
+            repository.saveSettings(cloudSettings)
+        }
     }
 
     private fun snapshotToMatch(snapshot: DocumentSnapshot): GameMatch {

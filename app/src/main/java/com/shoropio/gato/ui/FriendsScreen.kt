@@ -1,5 +1,6 @@
 package com.shoropio.gato.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -53,6 +55,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun FriendsScreen(
     onNavigateBack: () -> Unit,
+    onSignOut: () -> Unit,
     onChallengeFriend: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -60,13 +63,23 @@ fun FriendsScreen(
     val friendsList by FirebaseManager.observeFriends().collectAsState(initial = emptyList())
     val friendRequests by FirebaseManager.observeFriendRequests().collectAsState(initial = emptyList())
     val activeMatches by FirebaseManager.observeMyActiveMatches().collectAsState(initial = emptyList())
+    val ctx = LocalContext.current
     var searchQuery by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<OnlineUser>>(emptyList()) }
     var showSearch by remember { mutableStateOf(false) }
+    var isSearching by remember { mutableStateOf(false) }
 
     fun doSearch() {
+        if (searchQuery.isBlank()) {
+            Toast.makeText(ctx, "Ingresa un nombre o correo", Toast.LENGTH_SHORT).show()
+            return
+        }
+        isSearching = true
         scope.launch {
             searchResults = FirebaseManager.searchUsers(searchQuery)
+            isSearching = false
+            val count = searchResults.size
+            Toast.makeText(ctx, "$count resultado${if (count != 1) "s" else ""} encontrado${if (count != 1) "s" else ""}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -86,15 +99,22 @@ fun FriendsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CyberButton(
-                    text = "< VOLVER",
+                    text = "< ATRÁS",
                     onClick = onNavigateBack,
                     color = NeonCyan,
-                    modifier = Modifier.width(96.dp).height(38.dp),
+                    modifier = Modifier.width(88.dp).height(38.dp),
                     testTag = "btn_friends_back"
                 )
                 Spacer(modifier = Modifier.weight(0.2f))
                 NeonText(text = "AMIGOS", color = NeonCyan, fontSize = 22.sp)
-                Spacer(modifier = Modifier.width(32.dp))
+                Spacer(modifier = Modifier.weight(0.2f))
+                CyberButton(
+                    text = "SALIR",
+                    onClick = onSignOut,
+                    color = NeonMagenta,
+                    modifier = Modifier.width(72.dp).height(38.dp),
+                    fontSize = 11.sp
+                )
             }
 
             if (friendRequests.isNotEmpty()) {
@@ -202,6 +222,8 @@ fun FriendsScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(24.dp))
+
             // Friends list
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -250,11 +272,12 @@ fun FriendsScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         CyberButton(
-                            text = "BUSCAR",
+                            text = if (isSearching) "BUSCANDO..." else "BUSCAR",
                             onClick = { doSearch() },
-                            color = NeonCyan,
+                            color = if (isSearching) Color.Gray else NeonCyan,
                             modifier = Modifier.fillMaxWidth().height(36.dp),
-                            fontSize = 12.sp
+                            fontSize = 12.sp,
+                            enabled = !isSearching
                         )
                         if (searchResults.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(8.dp))
@@ -264,12 +287,18 @@ fun FriendsScreen(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    NeonText(text = user.displayName, color = Color.White, fontSize = 13.sp)
+                                    Column {
+                                        NeonText(text = user.displayName, color = Color.White, fontSize = 13.sp)
+                                        if (user.email.isNotBlank()) {
+                                            NeonText(text = user.email, color = Color.Gray, fontSize = 9.sp)
+                                        }
+                                    }
                                     CyberButton(
                                         text = "ENVIAR SOL.",
                                         onClick = {
                                             scope.launch {
                                                 FirebaseManager.sendFriendRequest(user.uid)
+                                                Toast.makeText(ctx, "Solicitud enviada a ${user.displayName}", Toast.LENGTH_SHORT).show()
                                                 searchQuery = ""
                                                 searchResults = emptyList()
                                                 showSearch = false
@@ -335,7 +364,7 @@ fun FriendsScreen(
                                 NeonText(
                                     text = if (friend.isOnline) "● EN LINEA" else "○ DESCONECTADO",
                                     color = if (friend.isOnline) NeonEmerald else Color.DarkGray,
-                                    fontSize = 9.sp
+                                    fontSize = 8.sp
                                 )
                             }
                             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {

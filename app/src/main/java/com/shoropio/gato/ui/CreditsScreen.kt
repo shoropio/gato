@@ -60,7 +60,7 @@ fun CreditsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CyberButton(
-                    text = "< VOLVER",
+                    text = "< ATRÁS",
                     onClick = onNavigateBack,
                     color = NeonCyan,
                     modifier = Modifier
@@ -105,9 +105,9 @@ fun CreditsScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    NeonText(text = "SHOROPIO CORPORATION", color = NeonEmerald, fontSize = 14.sp)
+                    NeonText(text = "Copyright", color = NeonEmerald, fontSize = 14.sp)
                     Text(
-                        text = "© 2026 Shoropio Corporation. Todos los derechos reservados.",
+                        text = "© 2026 Fei Animation ツ • Shoropio Corporation. Todos los derechos reservados.",
                         color = Color.LightGray,
                         fontSize = 10.sp,
                         fontFamily = FontFamily.Monospace

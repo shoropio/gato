@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -114,7 +115,14 @@ fun GameScreen(
     val rotateX = remember { Animatable(0f) }
     val rotateY = remember { Animatable(0f) }
 
-    // 4. Live Floating Particle Debris System
+    // 4. Stop background AI/Demo loops when leaving the screen
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.stopGame()
+        }
+    }
+
+    // 5. Live Floating Particle Debris System
     val particles = remember { mutableStateListOf<CoreParticle>() }
 
     // Emit particles when game is won
@@ -181,7 +189,7 @@ fun GameScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     CyberButton(
-                        text = "VUELTA",
+                        text = "ATRÁS",
                         onClick = onNavigateBack,
                         color = Color.LightGray,
                         modifier = Modifier

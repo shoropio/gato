@@ -82,7 +82,7 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CyberButton(
-                    text = "< VOLVER",
+                    text = "< ATRÁS",
                     onClick = onNavigateBack,
                     color = NeonCyan,
                     modifier = Modifier
@@ -238,7 +238,7 @@ fun SettingsScreen(
                     val stylesList = listOf(
                         Triple("default", "NEÓN CYBORG (Default)", Pair(NeonCyan, NeonMagenta)),
                         Triple("vaporwave", "SUNSET VAPORWAVE", Pair(NeonMagenta, NeonPurple)),
-                        Triple("emerald", "GREEN ESCREVER (Emerald)", Pair(NeonEmerald, NeonCyan)),
+                        Triple("emerald", "GREEN ESCREVER (Emeralda)", Pair(NeonEmerald, NeonCyan)),
                         Triple("gold", "PRESTIGIO DORADO", Pair(NeonAmber, Color(0xFFE2E8F0)))
                     )
 
@@ -268,6 +268,7 @@ fun SettingsScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
+                                Spacer(modifier = Modifier.height(4.dp))
                                 NeonText(
                                     text = styleLabel,
                                     color = if (isLocked) Color.DarkGray else if (isSelected) Color.White else Color.LightGray,
@@ -313,7 +314,7 @@ fun SettingsScreen(
 
             // SECTION 3: Avatar selection
             NeonText(
-                text = "SELEC IDENTIDAD CYBORG",
+                text = "SELECCIONAR IDENTIDAD CIBORG",
                 color = NeonMagenta.copy(alpha = 0.9f),
                 fontSize = 12.sp,
                 modifier = Modifier.fillMaxWidth()

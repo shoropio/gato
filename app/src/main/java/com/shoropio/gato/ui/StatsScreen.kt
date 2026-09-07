@@ -76,7 +76,7 @@ fun StatsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CyberButton(
-                    text = "< VOLVER",
+                    text = "< ATRÁS",
                     onClick = onNavigateBack,
                     color = NeonCyan,
                     modifier = Modifier

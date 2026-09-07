@@ -261,11 +261,11 @@ fun MainMenuScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Futuristic version tag
             NeonText(
-                text = "© 2026 Shoropio Corporation. Todos los derechos reservados.",
+                text = "© 2026 Fei Animation ツ. Todos los derechos reservados.",
                 color = Color.Gray.copy(alpha = 0.8f),
                 fontSize = 8.sp,
                 modifier = Modifier.padding(bottom = 24.dp)

@@ -43,6 +43,9 @@ interface GameDao {
     @Query("SELECT * FROM achievements")
     fun getAllAchievementsFlow(): Flow<List<AchievementEntity>>
 
+    @Query("SELECT * FROM achievements WHERE achievementId = :id")
+    suspend fun getAchievement(id: String): AchievementEntity?
+
     @Query("SELECT isUnlocked FROM achievements WHERE achievementId = :id")
     suspend fun isAchievementUnlocked(id: String): Boolean
 

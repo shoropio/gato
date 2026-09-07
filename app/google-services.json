@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "332656003926-5n7hsohp5be76srb3eel1hkvmno8iklf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shoropio.gato",
+            "certificate_hash": "b8fb04c3a5e4f9c4c86145e8dc4606a5605f0026"
+          }
+        },
+        {
           "client_id": "332656003926-lbu2v23sgmb2bmv9jhqju6kenrbrndl1.apps.googleusercontent.com",
           "client_type": 3
         }

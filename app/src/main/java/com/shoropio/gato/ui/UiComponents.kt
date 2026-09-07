@@ -180,6 +180,7 @@ fun CyberButton(
     modifier: Modifier = Modifier,
     color: Color = NeonCyan,
     isSecondary: Boolean = false,
+    enabled: Boolean = true,
     testTag: String = "",
     fontSize: TextUnit = 15.sp
 ) {
@@ -190,7 +191,7 @@ fun CyberButton(
     val isPressed by interactionSource.collectIsPressedAsState()
 
     LaunchedEffect(isPressed) {
-        if (isPressed) {
+        if (isPressed && enabled) {
             if (FeedbackSettings.isVibrationEnabled) {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             }
@@ -200,8 +201,8 @@ fun CyberButton(
         }
     }
 
-    val finalBorderColor = if (isSecondary) NeonMagenta else color
-    val buttonBg = if (isPressed) finalBorderColor.copy(alpha = 0.15f) else Color(0x0DFFFFFF)
+    val finalColor = if (enabled) { if (isSecondary) NeonMagenta else color } else Color.Gray
+    val buttonBg = if (enabled && isPressed) finalColor.copy(alpha = 0.15f) else Color(0x0DFFFFFF)
 
     Box(
         modifier = modifier
@@ -216,8 +217,8 @@ fun CyberButton(
                 width = 2.dp,
                 brush = Brush.horizontalGradient(
                     listOf(
-                        finalBorderColor,
-                        finalBorderColor.copy(alpha = 0.3f)
+                        finalColor,
+                        finalColor.copy(alpha = 0.3f)
                     )
                 ),
                 shape = RectangleShape
@@ -226,6 +227,7 @@ fun CyberButton(
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = {
+                    if (!enabled) return@clickable
                     SoundSynthesizer.playClick()
                     if (FeedbackSettings.isVibrationEnabled) {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -239,10 +241,10 @@ fun CyberButton(
     ) {
         NeonText(
             text = text,
-            color = if (isPressed) Color.White else finalBorderColor,
+            color = if (enabled && isPressed) Color.White else finalColor,
             fontSize = fontSize,
             fontWeight = FontWeight.Bold,
-            glowColor = finalBorderColor
+            glowColor = finalColor
         )
     }
 }

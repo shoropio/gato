@@ -22,10 +22,16 @@ class GameRepository(private val gameDao: GameDao) {
 
     suspend fun saveSettings(userSettings: UserSettingsEntity) {
         gameDao.insertSettings(userSettings)
+        if (FirebaseManager.isSignedIn()) {
+            FirebaseManager.syncSettings(userSettings)
+        }
     }
 
     suspend fun unlockCosmetic(cosmeticId: String) {
         gameDao.unlockCosmetic(cosmeticId)
+        if (FirebaseManager.isSignedIn()) {
+            FirebaseManager.syncCosmetic(UnlockedCosmeticEntity(cosmeticId, isUnlocked = true))
+        }
     }
 
     suspend fun isCosmeticUnlocked(cosmeticId: String): Boolean {
@@ -33,12 +39,38 @@ class GameRepository(private val gameDao: GameDao) {
         return gameDao.getCosmetic(cosmeticId)?.isUnlocked == true
     }
 
+    suspend fun insertOrUpdateStats(stats: GameStatsEntity) {
+        gameDao.insertOrUpdateStats(stats)
+        if (FirebaseManager.isSignedIn()) {
+            FirebaseManager.syncStats(stats)
+        }
+    }
+
+    suspend fun getAchievement(id: String): AchievementEntity? {
+        return gameDao.getAchievement(id)
+    }
+
+    suspend fun insertAchievement(achievement: AchievementEntity) {
+        gameDao.insertAchievement(achievement)
+        if (FirebaseManager.isSignedIn()) {
+            FirebaseManager.syncAchievement(achievement)
+        }
+    }
+
     suspend fun updateAchievementProgress(id: String, progress: Int) {
         gameDao.updateAchievementProgress(id, progress)
+        if (FirebaseManager.isSignedIn()) {
+            val existing = gameDao.getAchievement(id) ?: return
+            FirebaseManager.syncAchievement(existing)
+        }
     }
 
     suspend fun unlockAchievement(id: String) {
         gameDao.unlockAchievement(id, System.currentTimeMillis())
+        if (FirebaseManager.isSignedIn()) {
+            val existing = gameDao.getAchievement(id) ?: return
+            FirebaseManager.syncAchievement(existing)
+        }
     }
 
     /**
@@ -71,8 +103,8 @@ class GameRepository(private val gameDao: GameDao) {
             totalPlayed = newTotal
         )
 
-        gameDao.insertOrUpdateStats(updatedStats)
-        
+        insertOrUpdateStats(updatedStats)
+
         // Trigger achievement evaluations based on general gameplay results
         evaluateSystemAchievements(modeId, updatedStats)
     }

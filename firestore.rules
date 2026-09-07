@@ -26,13 +26,17 @@ service cloud.firestore {
       }
     }
 
-    // Lista de amigos - cada usuario solo ve y administra sus propios amigos
+    // Lista de amigos
+    // uid = owner of the list, friendUid = the friend being added
+    // Both the owner and the friend can write (needed for mutual friend acceptance)
     match /friends/{uid} {
       allow read: if request.auth != null && request.auth.uid == uid;
 
       match /friends/{friendUid} {
         allow read: if request.auth != null && request.auth.uid == uid;
-        allow write: if request.auth != null && request.auth.uid == uid;
+        allow write: if request.auth != null && (
+          request.auth.uid == uid || request.auth.uid == friendUid
+        );
       }
     }
 

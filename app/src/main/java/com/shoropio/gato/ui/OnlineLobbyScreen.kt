@@ -66,7 +66,7 @@ fun OnlineLobbyScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CyberButton(
-                    text = "< VOLVER",
+                    text = "< ATRÁS",
                     onClick = onNavigateBack,
                     color = NeonCyan,
                     modifier = Modifier.width(96.dp).height(38.dp),
